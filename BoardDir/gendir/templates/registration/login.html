@@ -1,0 +1,25 @@
+{% extends "gendir/index.html" %}
+{% block title %}Log-in{% endblock %}
+{% block content %}
+ <div class="card p-3 m-3" style="width: 18rem;">
+  <div class="card-body">
+
+    <h6 class="card-header bg-info">Вход</h6>
+    {% if form.errors %}
+        <p>
+            не подходит, попробуйте снова
+        </p>
+    {% else %}
+        <p>заполните форму для входа:</p>
+    {% endif %}
+    <div class="login-form">
+        <form action="{% url 'login' %}" method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+            <p><input type="submit" value="Log-in"></p>
+        </form>
+    </div>
+  </div>
+ </div>
+{% endblock %}
