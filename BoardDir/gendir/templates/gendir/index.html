@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
+<!-- MDB -->
+<!--<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.4.0/mdb.min.css" rel="stylesheet"/><--->
+<link href="{% static 'gendir/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
+
+    <title>{% block title %}{% endblock %}</title>
+
+</head>
+{% include 'gendir/main.html' %}
+
+<body>
+<div id="content">
+    {% block content %}
+    {% endblock %}
+</div>
+<br><br>
+<div class="d-flex flex-wrap">
+{% for type, tasks in f_tasks.items %}
+<div class="card d-flex m-2 p-2" >
+    <div class="card-header bg-info text-white">
+     <div class="row">
+        <div class="col-1 p-1 m-1">
+        <a href="javascript:colapse('type_{{type.id}}');" id="collapse_type_{{type.id}}_but">
+        <button type=button class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-minus"></i>
+        </button></a>
+        </div>
+        <div class="col"><h5>{{type.name}}</h5></div>
+        {% for tsk in task_len %}
+        {% if type.id == tsk.0 %}
+        <div class="col text-end">задач: {{tsk.1}}</div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    </div>
+    <div id="collapse_type_{{type.id}}" style="display:inline">
+    {% for task in tasks %}
+       <div class="card d-flex m-2 p-2" style="width: 30rem;">
+       <div class="card-header">
+           <div class="row text-primary lh-1" style="font-size:80%">
+               <div class="col text-end">{{task.date_start|date:'d.m.y'}}</div>
+           </div>
+           <div class="row">
+           <div class="col"><a href="javascript:colapse('task_{{task.id}}');" id="collapse_task_{{task.id}}_but">
+                <button type=button class="btn-sm btn-outline-primary" ><i class="fas fa-plus"></i>
+            </button></a></div>
+            <div class="col text-danger fw-bold" >{{task.overal_priority|floatformat:"0" }}</div>
+            <div class="col-9"><h6>{{task.name}}</h6></div>
+           </div>
+       </div>
+        <div class="row" id="notes_{{task.id}}" style="font-size:80%">
+            <div class="col">{{task.notes}}</div>
+        </div>
+
+       <div class="row text-primary" >
+           <div class="col">{{task.person.name}}</div>
+           <div class="col text-end"> {{task.position.name}}</div>
+       </div>
+       <div class="row">
+          <div class="col">статус на {{task.current_date|date:'d.m.y'}}</div>
+       </div>
+       <div class=" row">
+           <div class="col"><h6>{{task.status}}</h6></div>
+       </div>
+       <div class="row">
+        <div class="col"><label for="todo_{{task.id}}">план мероприятий</label></div>
+        <div class="col">следующий отчет {{task.date_target|date:'d.m.y'}}</div>
+       </div>
+       <div class="row" id="todo_{{task.id}}">
+            <h6>1. {{task.to_do_first}}</h6>
+            <h6>2. {{task.to_do_second}}</h6>
+       </div>
+
+
+
+       <div id="collapse_task_{{task.id}}" style="display:none">
+        <div class="row" id="main_{{task.id}}">
+            <div class="col">приоритет: {{task.priority}}</div>
+        </div>
+           <label for="reports_{{task.id}}"><h6>ожидаемый эффект</h6></label>
+        <div class="row" id="income_effect_{{task.id}}">
+            {% if task.income_affect %}
+            <<div class="col">
+                <label class="form-check-label" for="incomeChecked_{{task.id}}">влияет на доход</label>
+                <input class="form-check-input" type="checkbox" value="" id="incomeChecked_{{task.id}}" checked>
+            </div>
+            <label class="form-check-label" for="income_amount_{{task.id}}">изменение в месяц</label>
+            <div class="col text-end" id="income_amount_{{task.id}}" >изм. в мес: &nbsp{{task.income_monthly_effect}}</div>
+            {% else %}
+            <div class="col">
+                <label class="form-check-label" for="incomeUnChecked_{{task.id}}">влияет на доход</label>
+                <input class="form-check-input" type="checkbox" value="" id="incomeUnChecked_{{task.id}}">
+            </div>
+            {% endif %}
+        </div>
+        <div class="row" id="expenses_effect_{{task.id}}">
+            {% if task.expenses_affect %}
+            <div class="col">
+                <label class="form-check-label" for="expensesChecked_{{task.id}}">влияет на затраты</label>
+                <input class="form-check-input" type="checkbox" value="" id="expensesChecked_{{task.id}}" checked>
+            </div>
+            <div class="col text-end" id="expenses_amount_{{task.id}}">изм. в мес: &nbsp{{task.expenses_monthly_effect}}</div>
+            {% else %}
+            <div class="col">
+                <label class="form-check-label" for="expensesUnChecked_{{task.id}}">влияет на затраты</label>
+                <input class="form-check-input" type="checkbox" value="" id="expensesUnChecked_{{task.id}}">
+            </div>
+            {% endif %}
+        </div>
+        <div class="row" id="profit_effect_{{task.id}}">
+            {% if task.profit_affect %}
+            <div class="col">
+                <label class="form-check-label" for="profitChecked_{{task.id}}">влияет на прибыль</label>
+                <input class="form-check-input" type="checkbox" value="" id="profitChecked_{{task.id}}" checked>
+            </div>
+            <div class="col text-end" id="profit_amount_{{task.id}}">изм. в мес: &nbsp{{task.profit_monthly_effect}}</div>
+            {% else %}
+            <div class="col">
+                <label class="form-check-label" for="profitUnChecked_{{task.id}}">влияет на прибыль</label>
+                <input class="form-check-input" type="checkbox" value="" id="profitUnChecked_{{task.id}}">
+            </div>
+            {% endif %}
+        </div>
+        <div class="row" id="other_effect_{{task.id}}">
+            <div class="col"> другое: {{task.other_effect}} </div>
+        </div>
+        <label for="inv_pay_{{task.id}}"></label><h6>затраты на реализацию</h6></label>
+        <div id="inv_pay_{{task.id}}">
+        <label for="investments_{{task.id}}"><ins>разовые</ins></label>
+        <div class="row lh-1" id="investments_{{task.id}}">
+            <div class="col">всего: {{task.investments}}</div>
+            <div class="col">начало: {{task.investments_start|date:'d.m.y'}}</div>
+            <div class="col">месяцев: {{task.investments_period}}</div>
+        </div>
+        <label for="pays_{{task.id}}"><ins>регулярные</ins></label>
+        <div class="row lh-1" id="pays_{{task.id}}">
+            <div class="col">в месяц: {{task.monthly_expenses}}</div>
+            <div class="col">начало: {{task.expenses_start|date:'d.m.y'}}</div>
+            <div class="col">месяцев: {{task.expenses_period}}</div>
+        </div>
+        </div>
+        <br>
+        <label for="reports_{{task.id}}"><h6>последний отчет</h6></label>
+        <div class="row" id="reports_{{task.id}}">
+            <div class="col">{{task.last_report_summary}}</div>
+            <div class="col text-end">
+                <a href="{{task.last_report_file.name}}">{{task.last_report_file.name}}</a>
+            </div>
+        </div>
+        <div class="row m-1">
+            <div class="col text-start">
+                <button type="button" class="btn btn-sm btn-outline-danger">Завершить</button>
+            </div>
+            <div class="col text-end">
+                <a href="/gendir/edit_task/{{task.id}}">
+                <button type="button" class="btn btn-sm btn-outline-primary">Изменить</button></a>
+            </div>
+        </div>
+        </div> <!-- end of collapse -->
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+
+{% endfor %}
+</div>
+
+
+<!-- MDB -->
+<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.4.0/mdb.min.js"></script><--->
+<script src="{% static 'gendir/bootstrap.bundle.min.js' %}" crossorigin="anonymous"></script>
+<script src="{% static 'gendir/gendir.js' %}"></script>
+
+</body>
+</html>
