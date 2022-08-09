@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import User
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.files.storage import default_storage
 from django.template import loader
 from django.urls import reverse
 
-from .models import Persons, Positions, Task_types, Tasks, Tasks_Log
+from .models import Persons, Positions, Task_types, Tasks
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
 import datetime
@@ -40,6 +41,8 @@ def new_task(request):
 
 def add_task(request):
     name = request.POST['name']
+    user = request.POST['user']
+    user = User.objects.get(id=user)
     if name == '':
         date_t = datetime.date.today()
         types = list(Task_types.objects.all())
@@ -57,10 +60,12 @@ def add_task(request):
     position = Positions.objects.get(name=position)
     priority = int(request.POST['priority'])
     notes = request.POST['notes']
-    last_report_file = request.FILES['last_report_file']
-    file_name = str(date_start) + '_' + str(last_report_file.name)
-    default_storage.save(file_name, last_report_file)
-
+    try:
+        last_report_file = request.FILES['last_report_file']
+        file_name = str(date_start) + '_' + str(last_report_file.name)
+        default_storage.save(file_name, last_report_file)
+    except:
+        last_report_file = ''
     last_report_summary = request.POST['last_report_summary']
     status = request.POST['status']
     to_do_first = request.POST['to_do_first']
@@ -82,7 +87,7 @@ def add_task(request):
                      priority=priority, notes=notes, income_affect=income_affect, expenses_affect=expenses_affect,
                      profit_affect=profit_affect, other_effect=other_effect, to_do_first=to_do_first,
                      to_do_second=to_do_second, last_report_file=last_report_file,
-                     last_report_summary=last_report_summary, status=status)
+                     last_report_summary=last_report_summary, status=status, log_person=user)
     income_monthly_effect = request.POST['income_monthly_effect']
     expenses_monthly_effect = request.POST['expenses_amount']
     profit_monthly_effect = request.POST['profit_amount']
@@ -115,12 +120,15 @@ def add_task(request):
         except:
             pass
     try:
-        overal_priority = priority*type.priority/100
+        overal_priority = priority*type.priority/10
         task_new.overal_priority = overal_priority
         task_new.date_target = datetime.datetime.strptime(date_target, '%Y-%m-%d').strftime('%Y-%m-%d')
         task_new.current_date = datetime.datetime.strptime(current_date, '%Y-%m-%d').strftime('%Y-%m-%d')
     except:
         pass
+    task_new.save()
+    task_id = task_new.id
+    task_new.task_id = task_id
     task_new.save()
     date_t = datetime.date.today()
     types = list(Task_types.objects.all())
@@ -161,8 +169,6 @@ def edit_task(request, id):
     persons = list(Persons.objects.all())
     positions = list(Positions.objects.all())
     current_task = Tasks.objects.get(id=id)
-    task_log = Tasks_Log(date_start=current_task.date_start, name=current_task.name, status=current_task.status)
-    context = {'task': current_task, 'types': types, 'persons': persons, 'positions': positions, 'date_t': date_t,
-               'task_log': task_log}
+    context = {'task': current_task, 'types': types, 'persons': persons, 'positions': positions, 'date_t': date_t}
     return render(request, 'gendir/edit_task.html', context)
 

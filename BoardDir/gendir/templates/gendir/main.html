@@ -25,22 +25,26 @@
   <i class="fas fa-bars"></i>&nbsp {{user.first_name}} {{user.last_name}}</button>
 </div>
 </div>
-<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions2" aria-labelledby="offcanvasWithBothOptions2Label" style="width:60mm;">
-<!--  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasWithBothOptions2Label">Backdrop with scrolling</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div><--->
-  <div class="offcanvas-body">
+<div class="offcanvas offcanvas-start" data-bs-scroll="true"
+     tabindex="-1" id="offcanvasWithBothOptions2" aria-labelledby="offcanvasWithBothOptions2Label" style="width:60mm;">
+<div class="offcanvas-header">
+
+<!--<h5 class="offcanvas-title" id="offcanvasWithBothOptions2Label">&nbsp;</h5><--->
+
+
+
  {% if request.user.is_authenticated %}
-    <p><a href="{% url 'logout' %}"><button type="button" class="btn btn-outline-primary "> выход </button></a></p>
+    <a href="{% url 'logout' %}"><button type="button" class="btn btn-outline-primary "> выход </button></a>
  {% else %}
-    <p><a href="{% url 'login' %}"><button type="button" class="btn btn-outline-primary "> вход </button></a></p>
+    <a href="{% url 'login' %}"><button type="button" class="btn btn-outline-primary "> вход </button></a>
  {% endif %}
+<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+</div>
+<div class="offcanvas-body" >
     <p><a href="/gendir">Задачи</a></p>
     <p><a href="/gendir/new_task">Новая задача</a></p>
     <p>История</p>
-
-  </div>
+</div>
 </div>
 
 <!-- MDB -->

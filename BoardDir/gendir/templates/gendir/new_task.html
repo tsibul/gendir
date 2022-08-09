@@ -24,6 +24,7 @@
 <div class="col text-end p-1 m-1">
     <button type="submit" class="btn btn-outline-success">Записать</button>
 </div></div>
+<input type="text" name="user" value="{{user.id}}" hidden>
 <div class="border border-2 border-primary p-1 m-1">
 <label for="main_0"><h5>основная информация</h5></label>
 <div class="row" id="main_0">
@@ -63,7 +64,8 @@
 <div class="row">
   <div class="col-2 mb-2">
       <label for="priority_0">приоритет</label>
-      <input type="number" class="form-control" id="priority_0" name="priority" placeholder="приоритет">
+      <input type="number" class="formcontrol" id="priority_0" name="priority"
+             placeholder="1-10" min="1" max="10">
   </div>
   <div class="col mb-2">
       <label for="notes_0">комментарий</label>

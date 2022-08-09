@@ -52,7 +52,7 @@
            <div class="col"><a href="javascript:colapse('task_{{task.id}}');" id="collapse_task_{{task.id}}_but">
                 <button type=button class="btn-sm btn-outline-primary" ><i class="fas fa-plus"></i>
             </button></a></div>
-            <div class="col text-danger fw-bold" >{{task.overal_priority|floatformat:"0" }}</div>
+            <div class="col text-danger fw-bold" >{{task.overal_priority|floatformat:"1" }}</div>
             <div class="col-9"><h6>{{task.name}}</h6></div>
            </div>
        </div>
@@ -153,6 +153,11 @@
             <div class="col">{{task.last_report_summary}}</div>
             <div class="col text-end">
                 <a href="{{task.last_report_file.name}}">{{task.last_report_file.name}}</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-primary" style="font-size:80%;">
+                правил: {{task.log_person.first_name}} {{task.log_person.last_name}}
             </div>
         </div>
         <div class="row m-1">
